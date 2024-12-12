@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Integrales Indefinidas</title>
+
+    <!-- Librerías necesarias -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjs@11.0.0/lib/browser/math.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 10px;
+        }
+        #output {
+            margin-top: 20px;
+        }
+        #graph {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calculadora de Integrales Indefinidas</h1>
+    <p>Introduce la función para la cual deseas calcular la integral indefinida:</p>
+    <input type="text" id="funcion" placeholder="Ej. x^2 + 3*x + 2">
+    <button onclick="calcularIntegral()">Calcular Integral</button>
+
+    <div id="output"></div>
+
+    <div id="graph"></div>
+
+    <script>
+        // Función que calcula la integral y genera el desarrollo paso a paso
+        function calcularIntegral() {
+            // Obtener la función del input
+            const funcion = document.getElementById('funcion').value;
+
+            // Usar math.js para calcular la integral indefinida
+            try {
+                // Parseamos la función introducida y calculamos la integral indefinida
+                const mathjs = math.parse(funcion);
+                const integral = math.integral(mathjs, 'x');
+
+                // Mostrar el resultado de la integral en formato paso a paso
+                document.getElementById('output').innerHTML = `
+                    <h2>Integral de ${funcion}:</h2>
+                    <p>Desarrollo paso a paso:</p>
+                    <p>∫(${funcion}) dx = ${integral.toString()} + C</p>
+                    <p>El resultado de la integral es una función más la constante de integración (C).</p>
+                `;
+                
+                // Graficar la función y su integral
+                graficar(funcion, integral.toString());
+            } catch (error) {
+                document.getElementById('output').innerHTML = `<p>Error en el cálculo de la integral: ${error.message}</p>`;
+            }
+        }
+
+        // Función para graficar la función original y su integral
+        function graficar(funcion, integral) {
+            const x_vals = [];
+            const y_vals = [];
+            const y_integral_vals = [];
+
+            for (let i = -10; i <= 10; i += 0.1) {
+                x_vals.push(i);
+                y_vals.push(eval(funcion.replace(/x/g, `(${i})`)));
+                y_integral_vals.push(eval(integral.replace(/x/g, `(${i})`)));
+            }
+
+            const trace1 = {
+                x: x_vals,
+                y: y_vals,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'f(x) = ' + funcion
+            };
+
+            const trace2 = {
+                x: x_vals,
+                y: y_integral_vals,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Integral: ∫' + funcion
+            };
+
+            const layout = {
+                title: 'Gráfico de la función y su integral',
+                xaxis: {
+                    title: 'x'
+                },
+                yaxis: {
+                    title: 'y'
+                }
+            };
+
+            Plotly.newPlot('graph', [trace1, trace2], layout);
+        }
+    </script>
+</body>
+</html>
