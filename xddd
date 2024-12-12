@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Integrales Indefinidas</title>
+  <script src="https://cdn.jsdelivr.net/npm/mathjs@11.9.1/lib/browser/math.js"></script>
+</head>
+<body>
+  <h1>Calculadora de Integrales Indefinidas</h1>
+  <form id="integral-form">
+    <label for="funcion">Ingresa la función:</label>
+    <input type="text" id="funcion" placeholder="f(x)">
+    <button type="submit">Calcular Integral</button>
+  </form>
+
+  <p id="resultado"></p>
+
+  <script>
+    document.getElementById('integral-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const funcion = document.getElementById('funcion').value;
+      
+      try {
+        const integral = math.integral(funcion, 'x');
+        document.getElementById('resultado').innerText = 'Integral: ' + integral.toString();
+      } catch (error) {
+        document.getElementById('resultado').innerText = 'Error al calcular la integral: ' + error.message;
+      }
+    });
+  </script>
+</body>
+</html>
